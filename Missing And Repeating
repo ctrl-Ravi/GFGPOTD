@@ -1,0 +1,52 @@
+Difficulty: MediumAccuracy: 24.83%Submissions: 498K+Points: 4
+Given an unsorted array arr of of positive integers. One number 'A' from set {1, 2,....,n} is missing and one number 'B' occurs twice in array. Find numbers A and B.
+
+Examples
+
+Input: arr[] = [2, 2]
+Output: 2 1
+Explanation: Repeating number is 2 and smallest positive missing number is 1.
+Input: arr[] = [1, 3, 3] 
+Output: 3 2
+Explanation: Repeating number is 3 and smallest positive missing number is 2.
+Expected Time Complexity: O(n)
+Expected Auxiliary Space: O(1)
+
+Solution:
+class Solution {
+  public:
+    vector<int> findTwoElement(vector<int>& arr) {
+        int sorted;  // To store the missing number
+        int number;  // To store the repeating number
+        int n = arr.size();
+
+        // Step 1: Sort the array once
+        sort(arr.begin(), arr.end());
+
+        // Step 2: Traverse the sorted array to find the repeating and missing elements
+        for (int i = 1; i < n; i++) {
+            // If two consecutive elements are the same, that's the repeating number
+            if (arr[i] == arr[i - 1]) {
+                number = arr[i];
+            }
+            // If there is a gap in the sequence, the missing number is found
+            else if (arr[i] > arr[i - 1] + 1) {
+                sorted = arr[i - 1] + 1;
+            }
+        }
+
+        // Step 3: Check if the missing number is at the boundaries (1 or n)
+        if (arr[0] != 1) {
+            sorted = 1;  // If 1 is missing
+        } else if (arr[n - 1] != n) {
+            sorted = n;  // If n is missing
+        }
+
+        // Step 4: Store the repeating and missing numbers in the result vector
+        vector<int> result;
+        result.push_back(number);  // Repeating number
+        result.push_back(sorted);  // Missing number
+
+        return result;
+    }
+};
