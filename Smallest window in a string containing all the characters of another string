@@ -1,0 +1,71 @@
+Difficulty: HardAccuracy: 30.19%Submissions: 157K+Points: 8
+Given two strings s and p. Find the smallest window in the string s consisting of all the characters(including duplicates) of the string p.  Return "-1" in case there is no such window present. In case there are multiple such windows of same length, return the one with the least starting index.
+Note : All characters are in Lowercase alphabets. 
+Examples:
+Input: s = "timetopractice", p = "toc"
+Output: toprac
+Explanation: "toprac" is the smallest
+substring in which "toc" can be found.
+Input: s = "zoomlazapzo", p = "oza"
+Output: apzo
+Explanation: "apzo" is the smallest 
+substring in which "oza" can be found.
+
+
+Solution :
+class Solution {
+public:
+    string smallestWindow(string s, string p) {
+        // Step 1: Edge case: if length of s is less than p, return "-1"
+        if (s.length() < p.length()) {
+            return "-1";
+        }
+
+        // Step 2: Frequency count of characters in string p
+        vector<int> pFreq(128, 0);  // 128 to cover all ASCII characters
+        for (char ch : p) {
+            pFreq[ch]++;
+        }
+
+        int minLength = INT_MAX;  // To store the minimum length of the valid window
+        int start = 0;            // Pointer for the starting index of the window
+        int matched = 0;          // To track the number of characters matched
+        int windowStart = -1;     // To store the starting index of the result window
+
+        vector<int> windowFreq(128, 0);  // To store the frequency of characters in the current window
+
+        // Step 3: Use sliding window approach
+        for (int end = 0; end < s.length(); ++end) {
+            char endChar = s[end];
+            windowFreq[endChar]++;
+
+            // Step 4: If the current character's frequency matches the required frequency in p
+            if (pFreq[endChar] > 0 && windowFreq[endChar] <= pFreq[endChar]) {
+                matched++;
+            }
+
+            // Step 5: When all characters of p are matched, try to minimize the window
+            while (matched == p.length()) {
+                // Check if we have found a smaller valid window
+                if (end - start + 1 < minLength) {
+                    minLength = end - start + 1;
+                    windowStart = start;
+                }
+
+                // Shrink the window from the left
+                char startChar = s[start];
+                windowFreq[startChar]--;
+
+                // If we remove a character that breaks the match condition, reduce matched count
+                if (pFreq[startChar] > 0 && windowFreq[startChar] < pFreq[startChar]) {
+                    matched--;
+                }
+
+                start++;
+            }
+        }
+
+        // Step 6: If no valid window is found, return "-1"
+        return (windowStart == -1) ? "-1" : s.substr(windowStart, minLength);
+    }
+};
